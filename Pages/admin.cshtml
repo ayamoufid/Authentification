@@ -1,0 +1,47 @@
+﻿@page
+@model authentification.Pages.adminModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h1>Admin Panel</h1>
+<p>Bienvenue, vous êtes connecté en tant qu'administrateur.</p>
+
+<section>
+    <h2>Gestion des utilisateurs</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.ViewModel.Users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@string.Join(", ", await UserManager.GetRolesAsync(user))</td>
+                    <td>
+                        <form method="post" asp-page-handler="EditRole" asp-route-id="@user.Id">
+                            <select name="NewRole">
+                                @foreach (var role in Model.ViewModel.Roles)
+                                {
+                                    <option value="@role.Name">@role.Name</option>
+                                }
+                            </select>
+                            <button type="submit">Changer le rôle</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
